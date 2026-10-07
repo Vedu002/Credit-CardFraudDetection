@@ -1,0 +1,9 @@
+{
+  "data": "creditcard.csv",
+  "epochs": 15,
+  "batch_size": 2048,
+  "threshold": 0.5,
+  "sample": null,
+  "seed": 42,
+  "out": "results"
+}

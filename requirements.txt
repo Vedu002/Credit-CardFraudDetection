@@ -1,0 +1,9 @@
+tensorflow>=2.13
+xgboost>=2.0
+scikit-learn>=1.3
+pandas
+numpy
+matplotlib
+streamlit
+joblib
+shap
