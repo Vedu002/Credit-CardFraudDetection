@@ -38,95 +38,278 @@ CURVES_PNG = "results/curves.png"
 SAMPLE_CSV = "sample_real.csv"
 
 # ----------------------------------------------------------------------------
-# Custom CSS Design System (Cyber-Fintech Dark Glassmorphism)
+# Theme Management State
 # ----------------------------------------------------------------------------
-st.markdown("""
+if "theme_mode" not in st.session_state:
+    st.session_state["theme_mode"] = "🌙 Black Mode"
+
+# ----------------------------------------------------------------------------
+# Sidebar Control Deck - Theme Switcher & Header
+# ----------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("""
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="font-size: 1.8rem;">💳</span>
+            <div>
+                <div style="font-size: 1.08rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-primary); line-height: 1.2;">AI Fraud Detection</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Credit Card Intelligence</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Executive Theme Mode Switcher
+    st.markdown("<div style='font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;'>🌓 APPEARANCE THEME</div>", unsafe_allow_html=True)
+    
+    theme_choice = st.radio(
+        "Appearance Theme",
+        options=["🌙 Black Mode", "☀️ Light Mode"],
+        index=0 if st.session_state["theme_mode"] == "🌙 Black Mode" else 1,
+        horizontal=True,
+        key="theme_mode_selector",
+        label_visibility="collapsed",
+        help="Toggle between Cyber-Fintech Pitch Black Mode and Crisp High-Contrast Light Mode"
+    )
+
+    if theme_choice != st.session_state["theme_mode"]:
+        st.session_state["theme_mode"] = theme_choice
+        st.rerun()
+
+is_dark = (st.session_state["theme_mode"] == "🌙 Black Mode")
+
+# ----------------------------------------------------------------------------
+# Custom CSS Design System (Adaptive Cyber-Fintech Black & Crisp Light)
+# ----------------------------------------------------------------------------
+if is_dark:
+    theme_css = """
+    :root {
+        --bg-app: #050811;
+        --bg-gradient: radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.14) 0%, transparent 45%),
+                       radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.09) 0%, transparent 45%),
+                       #050811;
+        --bg-sidebar: #070B14;
+        --card-bg: rgba(15, 23, 42, 0.78);
+        --card-border: rgba(255, 255, 255, 0.09);
+        --card-border-hover: rgba(99, 102, 241, 0.45);
+        --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.65);
+        --card-shadow-hover: 0 16px 36px -6px rgba(0, 0, 0, 0.8);
+        --box-subtle-bg: rgba(15, 23, 42, 0.65);
+        --box-subtle-border: rgba(255, 255, 255, 0.07);
+
+        --text-primary: #F8FAFC;
+        --text-secondary: #CBD5E1;
+        --text-muted: #94A3B8;
+        --text-dim: #64748B;
+
+        --primary-cyan: #06B6D4;
+        --primary-blue: #3B82F6;
+        --accent-indigo: #6366F1;
+        --accent-purple: #8B5CF6;
+        --success-emerald: #10B981;
+        --warning-amber: #F59E0B;
+        --danger-rose: #EF4444;
+
+        --hero-bg: linear-gradient(135deg, rgba(30, 27, 75, 0.85) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(8, 47, 73, 0.75) 100%);
+        --hero-border: rgba(99, 102, 241, 0.35);
+        --hero-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.28);
+        --hero-title-gradient: linear-gradient(90deg, #FFFFFF 0%, #E2E8F0 60%, #38BDF8 100%);
+        --hero-threshold-bg: rgba(15, 23, 42, 0.65);
+
+        --kpi-card-bg: rgba(15, 23, 42, 0.85);
+        --kpi-val-color: #F8FAFC;
+        --model-pill-bg: rgba(30, 41, 59, 0.8);
+        --model-pill-border: rgba(255, 255, 255, 0.08);
+        --model-pill-val: #FFFFFF;
+
+        --verdict-fraud-bg: linear-gradient(135deg, rgba(153, 27, 27, 0.42) 0%, rgba(26, 12, 19, 0.85) 100%);
+        --verdict-fraud-border: rgba(239, 68, 68, 0.55);
+        --verdict-fraud-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.35);
+        --verdict-fraud-title: #F87171;
+        --verdict-fraud-sub: #FCA5A5;
+
+        --verdict-safe-bg: linear-gradient(135deg, rgba(6, 78, 59, 0.42) 0%, rgba(8, 24, 25, 0.85) 100%);
+        --verdict-safe-border: rgba(16, 185, 129, 0.55);
+        --verdict-safe-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.3);
+        --verdict-safe-title: #34D399;
+        --verdict-safe-sub: #A7F3D0;
+
+        --tab-inactive-color: #94A3B8;
+        --tab-active-color: #38BDF8;
+        --tab-border-active: #38BDF8;
+
+        --scrollbar-track: #0A0E1A;
+        --scrollbar-thumb: #1E293B;
+        --scrollbar-thumb-hover: #334155;
+
+        --input-bg: rgba(15, 23, 42, 0.8);
+        --input-border: rgba(255, 255, 255, 0.12);
+        --input-text: #F8FAFC;
+        --border-divider: rgba(255, 255, 255, 0.08);
+    }
+    """
+else:
+    theme_css = """
+    :root {
+        --bg-app: #F8FAFC;
+        --bg-gradient: radial-gradient(circle at 12% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 45%),
+                       radial-gradient(circle at 88% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 45%),
+                       #F8FAFC;
+        --bg-sidebar: #FFFFFF;
+        --card-bg: #FFFFFF;
+        --card-border: #E2E8F0;
+        --card-border-hover: #93C5FD;
+        --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+        --card-shadow-hover: 0 10px 25px -3px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(59, 130, 246, 0.12);
+        --box-subtle-bg: #F8FAFC;
+        --box-subtle-border: #E2E8F0;
+
+        --text-primary: #0F172A;
+        --text-secondary: #334155;
+        --text-muted: #64748B;
+        --text-dim: #94A3B8;
+
+        --primary-cyan: #0284C7;
+        --primary-blue: #2563EB;
+        --accent-indigo: #4F46E5;
+        --accent-purple: #7C3AED;
+        --success-emerald: #059669;
+        --warning-amber: #D97706;
+        --danger-rose: #DC2626;
+
+        --hero-bg: linear-gradient(135deg, #EEF2FF 0%, #FFFFFF 50%, #F0F9FF 100%);
+        --hero-border: rgba(99, 102, 241, 0.22);
+        --hero-shadow: 0 10px 28px -6px rgba(99, 102, 241, 0.12);
+        --hero-title-gradient: linear-gradient(90deg, #0F172A 0%, #1E3A8A 65%, #0284C7 100%);
+        --hero-threshold-bg: #FFFFFF;
+
+        --kpi-card-bg: #FFFFFF;
+        --kpi-val-color: #0F172A;
+        --model-pill-bg: #FFFFFF;
+        --model-pill-border: #E2E8F0;
+        --model-pill-val: #0F172A;
+
+        --verdict-fraud-bg: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+        --verdict-fraud-border: #FCA5A5;
+        --verdict-fraud-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.18);
+        --verdict-fraud-title: #DC2626;
+        --verdict-fraud-sub: #991B1B;
+
+        --verdict-safe-bg: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+        --verdict-safe-border: #86EFAC;
+        --verdict-safe-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.18);
+        --verdict-safe-title: #15803D;
+        --verdict-safe-sub: #166534;
+
+        --tab-inactive-color: #64748B;
+        --tab-active-color: #2563EB;
+        --tab-border-active: #2563EB;
+
+        --scrollbar-track: #F1F5F9;
+        --scrollbar-thumb: #CBD5E1;
+        --scrollbar-thumb-hover: #94A3B8;
+
+        --input-bg: #FFFFFF;
+        --input-border: #CBD5E1;
+        --input-text: #0F172A;
+        --border-divider: #E2E8F0;
+    }
+    """
+
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
-:root {
-    --bg-dark: #070B14;
-    --card-bg: rgba(15, 23, 42, 0.75);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --primary-cyan: #06B6D4;
-    --primary-blue: #3B82F6;
-    --accent-indigo: #6366F1;
-    --accent-purple: #8B5CF6;
-    --success-emerald: #10B981;
-    --warning-amber: #F59E0B;
-    --danger-rose: #EF4444;
-    --text-muted: #94A3B8;
-}
+{theme_css}
 
-html, body, [class*="css"] {
+html, body, [class*="css"] {{
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-}
+}}
 
-code, .mono {
+code, .mono {{
     font-family: 'JetBrains Mono', monospace !important;
-}
+}}
 
-/* App Background & Glow */
-.stApp {
-    background: radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
-                #070B14;
-    color: #F8FAFC;
-}
+/* App Container */
+.stApp {{
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+}}
 
-/* Glass Card */
-.sentinel-card {
+/* Typography enforcement */
+h1, h2, h3, h4, h5, h6 {{
+    color: var(--text-primary) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}}
+
+p, span, label, div[data-testid="stMarkdownContainer"] {{
+    color: var(--text-secondary);
+}}
+
+div[data-testid="stMarkdownContainer"] p {{
+    color: var(--text-secondary);
+}}
+
+/* Glass & Solid Cards */
+.sentinel-card {{
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 22px 24px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--card-shadow);
     margin-bottom: 20px;
     transition: all 0.25s ease;
-}
+}}
 
-.sentinel-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
-}
+.sentinel-card:hover {{
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-hover);
+}}
 
 /* Hero Banner */
-.hero-container {
-    background: linear-gradient(135deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(8, 47, 73, 0.7) 100%);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+.hero-container {{
+    background: var(--hero-bg);
+    border: 1px solid var(--hero-border);
     border-radius: 18px;
     padding: 24px 30px;
     margin-bottom: 24px;
-    box-shadow: 0 12px 35px -8px rgba(99, 102, 241, 0.25);
+    box-shadow: var(--hero-shadow);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-}
+}}
 
-.hero-title {
+.hero-title {{
     font-size: 1.85rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: linear-gradient(90deg, #FFFFFF 0%, #E2E8F0 60%, #38BDF8 100%);
+    background: var(--hero-title-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 0;
     line-height: 1.2;
-}
+}}
 
-.hero-subtitle {
+.hero-subtitle {{
     color: var(--text-muted);
     font-size: 0.92rem;
     margin-top: 6px;
     font-weight: 400;
-}
+}}
+
+.hero-stat-box {{
+    text-align: right;
+    background: var(--hero-threshold-bg);
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+}}
 
 /* Telemetry Pills */
-.badge-pill {
+.badge-pill {{
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -137,34 +320,34 @@ code, .mono {
     letter-spacing: 0.03em;
     text-transform: uppercase;
     border: 1px solid transparent;
-}
+}}
 
-.badge-online {
+.badge-online {{
     background: rgba(16, 185, 129, 0.15);
-    color: #34D399;
+    color: #10B981;
     border-color: rgba(16, 185, 129, 0.3);
-}
+}}
 
-.badge-neural {
+.badge-neural {{
     background: rgba(99, 102, 241, 0.18);
-    color: #A5B4FC;
+    color: #818CF8;
     border-color: rgba(99, 102, 241, 0.35);
-}
+}}
 
-.badge-cyan {
+.badge-cyan {{
     background: rgba(6, 182, 212, 0.15);
-    color: #67E8F9;
+    color: #06B6D4;
     border-color: rgba(6, 182, 212, 0.3);
-}
+}}
 
-.badge-danger {
+.badge-danger {{
     background: rgba(239, 68, 68, 0.2);
-    color: #FCA5A5;
+    color: #EF4444;
     border-color: rgba(239, 68, 68, 0.4);
-}
+}}
 
 /* Pulsing Indicator */
-.pulse-dot {
+.pulse-dot {{
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -172,55 +355,57 @@ code, .mono {
     display: inline-block;
     box-shadow: 0 0 0 rgba(16, 185, 129, 0.7);
     animation: pulse 1.8s infinite;
-}
+}}
 
-@keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
+@keyframes pulse {{
+    0% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }}
+    70% {{ transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }}
+    100% {{ transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }}
+}}
 
 /* Metric Display Cards */
-.kpi-container {
+.kpi-container {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
-}
+}}
 
-.kpi-card {
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+.kpi-card {{
+    background: var(--kpi-card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 14px;
     padding: 18px 20px;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(12px);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}}
 
-.kpi-card:hover {
+.kpi-card:hover {{
     transform: translateY(-2px);
-    border-color: rgba(99, 102, 241, 0.4);
-}
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-hover);
+}}
 
-.kpi-card::before {
+.kpi-card::before {{
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
     background: linear-gradient(90deg, #6366F1, #06B6D4);
-}
+}}
 
-.kpi-card.danger::before {
+.kpi-card.danger::before {{
     background: linear-gradient(90deg, #EF4444, #F59E0B);
-}
+}}
 
-.kpi-card.success::before {
+.kpi-card.success::before {{
     background: linear-gradient(90deg, #10B981, #06B6D4);
-}
+}}
 
-.kpi-label {
+.kpi-label {{
     font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -229,87 +414,194 @@ code, .mono {
     display: flex;
     align-items: center;
     gap: 6px;
-}
+}}
 
-.kpi-value {
+.kpi-value {{
     font-size: 1.85rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #F8FAFC;
+    color: var(--kpi-val-color);
     margin: 8px 0 4px 0;
     font-family: 'JetBrains Mono', monospace;
-}
+}}
 
-.kpi-subtext {
+.kpi-subtext {{
     font-size: 0.78rem;
-    color: #64748B;
+    color: var(--text-dim);
     font-weight: 500;
-}
+}}
 
 /* Verdict Banners */
-.verdict-fraud {
-    background: linear-gradient(135deg, rgba(153, 27, 27, 0.4) 0%, rgba(26, 12, 19, 0.8) 100%);
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    box-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.35);
+.verdict-fraud {{
+    background: var(--verdict-fraud-bg);
+    border: 1px solid var(--verdict-fraud-border);
+    box-shadow: var(--verdict-fraud-shadow);
     border-radius: 16px;
     padding: 24px;
     margin: 16px 0;
-}
+}}
 
-.verdict-safe {
-    background: linear-gradient(135deg, rgba(6, 78, 59, 0.4) 0%, rgba(8, 24, 25, 0.8) 100%);
-    border: 1px solid rgba(16, 185, 129, 0.5);
-    box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.3);
+.verdict-fraud-title {{
+    color: var(--verdict-fraud-title);
+    margin: 10px 0 4px 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+}}
+
+.verdict-fraud-sub {{
+    color: var(--verdict-fraud-sub);
+    font-size: 0.92rem;
+}}
+
+.verdict-safe {{
+    background: var(--verdict-safe-bg);
+    border: 1px solid var(--verdict-safe-border);
+    box-shadow: var(--verdict-safe-shadow);
     border-radius: 16px;
     padding: 24px;
     margin: 16px 0;
-}
+}}
 
-.model-pill-score {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+.verdict-safe-title {{
+    color: var(--verdict-safe-title);
+    margin: 10px 0 4px 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+}}
+
+.verdict-safe-sub {{
+    color: var(--verdict-safe-sub);
+    font-size: 0.92rem;
+}}
+
+.model-pill-score {{
+    background: var(--model-pill-bg);
+    border: 1px solid var(--model-pill-border);
     border-radius: 12px;
     padding: 14px;
     text-align: center;
-}
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+}}
+
+.model-pill-score:hover {{
+    transform: translateY(-2px);
+}}
+
+.model-pill-val {{
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--model-pill-val);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 4px 0;
+}}
 
 /* Sidebar Customization */
-section[data-testid="stSidebar"] {
-    background-color: #0A0F1D;
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-}
+section[data-testid="stSidebar"] {{
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-divider) !important;
+}}
+
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] .stMarkdown p {{
+    color: var(--text-secondary);
+}}
 
 /* Custom Tabs */
-div[data-testid="stTabs"] button[role="tab"] {
+div[data-testid="stTabs"] button[role="tab"] {{
     font-weight: 600;
     font-size: 0.95rem;
     padding: 10px 18px;
     border-radius: 8px;
     transition: all 0.2s ease;
-}
+    color: var(--tab-inactive-color) !important;
+}}
 
-div[data-testid="stTabs"] button[aria-selected="true"] {
-    color: #38BDF8 !important;
-    border-bottom: 2px solid #38BDF8 !important;
-}
+div[data-testid="stTabs"] button[aria-selected="true"] {{
+    color: var(--tab-active-color) !important;
+    border-bottom: 2px solid var(--tab-border-active) !important;
+}}
+
+/* Inputs and interactive elements */
+div[data-baseweb="input"] {{
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+}}
+
+div[data-baseweb="input"] input {{
+    color: var(--input-text) !important;
+}}
+
+div[data-testid="stExpander"] {{
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--card-shadow);
+}}
+
+/* Architecture Card */
+.arch-stage-card {{
+    background: var(--box-subtle-bg);
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--box-subtle-border);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+}}
+
+.arch-stage-card:hover {{
+    transform: translateY(-2px);
+}}
 
 /* Scrollbars */
-::-webkit-scrollbar {
+::-webkit-scrollbar {{
     width: 6px;
     height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: #0A0E1A;
-}
-::-webkit-scrollbar-thumb {
-    background: #1E293B;
+}}
+::-webkit-scrollbar-track {{
+    background: var(--scrollbar-track);
+}}
+::-webkit-scrollbar-thumb {{
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #334155;
-}
+}}
+::-webkit-scrollbar-thumb:hover {{
+    background: var(--scrollbar-thumb-hover);
+}}
 </style>
 """, unsafe_allow_html=True)
+
+
+# ----------------------------------------------------------------------------
+# Adaptive Chart Styling Helper
+# ----------------------------------------------------------------------------
+def configure_chart_theme(chart, dark=True):
+    """Adapts Altair chart axes, titles, fonts, and gridlines to the active theme."""
+    text_color = "#CBD5E1" if dark else "#334155"
+    title_color = "#F8FAFC" if dark else "#0F172A"
+    grid_color = "rgba(255, 255, 255, 0.08)" if dark else "rgba(0, 0, 0, 0.07)"
+    domain_color = "rgba(255, 255, 255, 0.15)" if dark else "rgba(0, 0, 0, 0.12)"
+
+    return chart.configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelColor=text_color,
+        titleColor=title_color,
+        gridColor=grid_color,
+        domainColor=domain_color,
+        labelFont="Plus Jakarta Sans, sans-serif",
+        titleFont="Plus Jakarta Sans, sans-serif"
+    ).configure_title(
+        color=title_color,
+        font="Plus Jakarta Sans, sans-serif",
+        fontSize=12,
+        fontWeight=700
+    ).configure_legend(
+        labelColor=text_color,
+        titleColor=title_color,
+        labelFont="Plus Jakarta Sans, sans-serif",
+        titleFont="Plus Jakarta Sans, sans-serif"
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -351,7 +643,6 @@ def load_artifacts(models_dir):
     )
 
 
-
 def predict(art, X_raw):
     """Generates predictions across base learners and stacking meta-ensemble."""
     X = art["scaler"].transform(X_raw[art["feature_names"]].values.astype("float32"))
@@ -385,36 +676,28 @@ if art is None:
 
 
 # ----------------------------------------------------------------------------
-# Sidebar Control Deck
+# Sidebar Control Deck - Continued
 # ----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("""
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-            <span style="font-size: 1.8rem;">💳</span>
-            <div>
-                <div style="font-size: 1.08rem; font-weight: 800; letter-spacing: -0.01em; color: #FFFFFF; line-height: 1.2;">AI-Driven Fraud Detection</div>
-                <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Credit Card Intelligence</div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<hr style='border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0 16px 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0; border-top: 1px solid var(--border-divider); margin: 12px 0 16px 0;'>", unsafe_allow_html=True)
 
     # Telemetry Status Box
-    st.markdown("""
-        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 12px 14px; margin-bottom: 20px;">
+    telemetry_item_style = "color: #10B981; float: right;"
+    telemetry_sync_style = "color: var(--primary-cyan); float: right;"
+    st.markdown(f"""
+        <div style="background: var(--box-subtle-bg); border: 1px solid var(--box-subtle-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 0.78rem; font-weight: 600; color: #94A3B8;">NETWORK STATUS</span>
-                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #34D399; font-weight: 700;">
+                <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">NETWORK STATUS</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #10B981; font-weight: 700;">
                     <span class="pulse-dot"></span> ONLINE
                 </span>
             </div>
-            <div style="font-size: 0.72rem; color: #64748B; line-height: 1.6;">
-                <div>• 1D-CNN (Spatial Conv) <span style="color:#10B981; float:right;">Active</span></div>
-                <div>• Bi-LSTM (Temporal Seq) <span style="color:#10B981; float:right;">Active</span></div>
-                <div>• Transformer (Attention) <span style="color:#10B981; float:right;">Active</span></div>
-                <div>• XGBoost (Gradient Tree) <span style="color:#10B981; float:right;">Active</span></div>
-                <div>• Meta-Stacking Ensemble <span style="color:#38BDF8; float:right;">Synchronized</span></div>
+            <div style="font-size: 0.72rem; color: var(--text-dim); line-height: 1.6;">
+                <div>• 1D-CNN (Spatial Conv) <span style="{telemetry_item_style}">Active</span></div>
+                <div>• Bi-LSTM (Temporal Seq) <span style="{telemetry_item_style}">Active</span></div>
+                <div>• Transformer (Attention) <span style="{telemetry_item_style}">Active</span></div>
+                <div>• XGBoost (Gradient Tree) <span style="{telemetry_item_style}">Active</span></div>
+                <div>• Meta-Stacking Ensemble <span style="{telemetry_sync_style}">Synchronized</span></div>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -450,22 +733,22 @@ with st.sidebar:
         mode_badge = "<span style='color: #F59E0B;'>⚠️ HIGH SENSITIVITY</span>"
         mode_desc = "Catches nearly all fraudulent attempts, but review queue volume increases."
     elif threshold > 0.65:
-        mode_badge = "<span style='color: #38BDF8;'>🕊️ HIGH SPECIFICITY</span>"
+        mode_badge = "<span style='color: #0284C7;'>🕊️ HIGH SPECIFICITY</span>"
         mode_desc = "Minimizes false alarms and checkout friction. Conservative flagging."
     else:
         mode_badge = "<span style='color: #10B981;'>⚖️ OPTIMAL EQUILIBRIUM</span>"
         mode_desc = "Balanced production trade-off between recall and low customer friction."
 
     st.markdown(f"""
-        <div style="font-size: 0.76rem; background: rgba(30, 41, 59, 0.4); border-radius: 8px; padding: 10px; margin-top: 10px; border-left: 3px solid #38BDF8;">
+        <div style="font-size: 0.76rem; background: var(--box-subtle-bg); border-radius: 8px; padding: 10px; margin-top: 10px; border-left: 3px solid var(--primary-cyan); border: 1px solid var(--box-subtle-border); border-left-width: 3px;">
             <b>Policy Mode:</b> {mode_badge}<br>
-            <span style="color: #94A3B8;">{mode_desc}</span>
+            <span style="color: var(--text-muted);">{mode_desc}</span>
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<hr style='border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 20px 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0; border-top: 1px solid var(--border-divider); margin: 20px 0;'>", unsafe_allow_html=True)
     st.markdown("""
-        <div style="font-size: 0.74rem; color: #64748B; line-height: 1.5;">
+        <div style="font-size: 0.74rem; color: var(--text-dim); line-height: 1.5;">
             <b>Reference Literature:</b><br>
             Ileberi & Sun (2024), <i>IEEE Access</i>.<br>
             "A Hybrid Deep Learning Ensemble Model for Credit Card Fraud Detection"
@@ -476,10 +759,12 @@ with st.sidebar:
 # ----------------------------------------------------------------------------
 # Hero Header
 # ----------------------------------------------------------------------------
+theme_label = "🌙 Black Mode (Obsidian)" if is_dark else "☀️ Light Mode (Pure Slate)"
+
 st.markdown(f"""
 <div class="hero-container">
     <div>
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
             <span class="badge-pill badge-online"><span class="pulse-dot"></span> Production Engine Active</span>
             <span class="badge-pill badge-neural">Hybrid Neural Stacking</span>
             <span class="badge-pill badge-cyan">IEEE Access 2024</span>
@@ -489,10 +774,14 @@ st.markdown(f"""
             Autonomous multi-model surveillance combining <b>1D-CNN</b> (Spatial), <b>Bi-LSTM</b> (Temporal), <b>Transformer</b> (Self-Attention), and <b>XGBoost Stacking</b>.
         </div>
     </div>
-    <div style="display: flex; gap: 12px; align-items: center;">
-        <div style="text-align: right; background: rgba(15, 23, 42, 0.6); padding: 10px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-            <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Active Threshold</div>
-            <div style="font-size: 1.4rem; font-weight: 800; color: #38BDF8; font-family: 'JetBrains Mono', monospace;">{threshold:.2f}</div>
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <div class="hero-stat-box">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Theme Mode</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-top: 2px;">{theme_label}</div>
+        </div>
+        <div class="hero-stat-box">
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Active Threshold</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">{threshold:.2f}</div>
         </div>
     </div>
 </div>
@@ -518,7 +807,7 @@ with tab_batch:
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
             <div>
                 <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Transaction Batch Audit</h3>
-                <div style="font-size: 0.85rem; color: #94A3B8;">Analyze high-volume transaction payloads through the multi-learner ensemble.</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Analyze high-volume transaction payloads through the multi-learner ensemble.</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -584,17 +873,17 @@ with tab_batch:
                     </div>
                     <div class="kpi-card danger">
                         <div class="kpi-label">🚨 Fraud Quarantine</div>
-                        <div class="kpi-value" style="color: #F87171;">{n_flagged:,} <span style="font-size: 1rem; color: #94A3B8;">({flag_rate:.1%})</span></div>
+                        <div class="kpi-value" style="color: #EF4444;">{n_flagged:,} <span style="font-size: 1rem; color: var(--text-muted);">({flag_rate:.1%})</span></div>
                         <div class="kpi-subtext">Transactions >= {threshold:.2f} probability</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">💰 Protected Capital</div>
-                        <div class="kpi-value" style="color: #38BDF8;">${flagged_volume:,.2f}</div>
+                        <div class="kpi-value" style="color: var(--primary-cyan);">${flagged_volume:,.2f}</div>
                         <div class="kpi-subtext">Total volume screened: ${total_volume:,.2f}</div>
                     </div>
                     <div class="kpi-card success">
                         <div class="kpi-label">🤝 Multi-Model Consensus</div>
-                        <div class="kpi-value" style="color: #34D399;">{consensus_agreed:.1%}</div>
+                        <div class="kpi-value" style="color: #10B981;">{consensus_agreed:.1%}</div>
                         <div class="kpi-subtext">Concordance across 4 base learners</div>
                     </div>
                 </div>
@@ -618,9 +907,8 @@ with tab_batch:
                 ).properties(
                     title="Risk Score Probability Spectrum",
                     height=280
-                ).configure_view(
-                    strokeWidth=0
                 )
+                hist_chart = configure_chart_theme(hist_chart, is_dark)
                 st.altair_chart(hist_chart, use_container_width=True)
 
             with vis_c2:
@@ -638,9 +926,8 @@ with tab_batch:
                     ).properties(
                         title="Exposure vs Risk Score (Log Scale)",
                         height=280
-                    ).configure_view(
-                        strokeWidth=0
                     )
+                    scatter_chart = configure_chart_theme(scatter_chart, is_dark)
                     st.altair_chart(scatter_chart, use_container_width=True)
 
             # Quarantine Table & Filtering
@@ -687,7 +974,7 @@ with tab_batch:
                 auc_pr = average_precision_score(y_true, scored_df["Ensemble"])
                 f1_score = (2 * tp) / (2 * tp + fp + fn) if (2 * tp + fp + fn) > 0 else 0.0
 
-                st.markdown("<hr style='border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 24px 0;'>", unsafe_allow_html=True)
+                st.markdown("<hr style='border: 0; border-top: 1px solid var(--border-divider); margin: 24px 0;'>", unsafe_allow_html=True)
                 st.markdown("#### 🎯 Ground Truth Audit (Class Label Present)")
 
                 gt1, gt2, gt3, gt4, gt5 = st.columns(5)
@@ -701,20 +988,20 @@ with tab_batch:
                 st.markdown(f"""
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;">
                         <div class="model-pill-score" style="border-left: 3px solid #10B981;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">TRUE POSITIVES (CAUGHT)</div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: #10B981;">{tp}</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">TRUE POSITIVES (CAUGHT)</div>
+                            <div class="model-pill-val" style="color: #10B981;">{tp}</div>
                         </div>
                         <div class="model-pill-score" style="border-left: 3px solid #F59E0B;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">FALSE POSITIVES (FALSE ALARM)</div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: #F59E0B;">{fp}</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">FALSE POSITIVES (FALSE ALARM)</div>
+                            <div class="model-pill-val" style="color: #F59E0B;">{fp}</div>
                         </div>
                         <div class="model-pill-score" style="border-left: 3px solid #EF4444;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">FALSE NEGATIVES (MISSED)</div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: #EF4444;">{fn}</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">FALSE NEGATIVES (MISSED)</div>
+                            <div class="model-pill-val" style="color: #EF4444;">{fn}</div>
                         </div>
-                        <div class="model-pill-score" style="border-left: 3px solid #38BDF8;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">TRUE NEGATIVES (CLEAN)</div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: #38BDF8;">{tn}</div>
+                        <div class="model-pill-score" style="border-left: 3px solid var(--primary-cyan);">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">TRUE NEGATIVES (CLEAN)</div>
+                            <div class="model-pill-val" style="color: var(--primary-cyan);">{tn}</div>
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -737,7 +1024,7 @@ with tab_single:
     st.markdown("""
         <div>
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Real-Time Transaction Inspector</h3>
-            <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 14px;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
                 Inspect individual transactions in real-time or test pre-configured fraud / legitimate profiles.
             </div>
         </div>
@@ -788,9 +1075,8 @@ with tab_single:
         if f"inp_{f}" not in st.session_state:
             st.session_state[f"inp_{f}"] = float(defaults.get(f, 0.0))
 
-    st.markdown("<div style='font-size: 0.82rem; font-weight: 600; color: #94A3B8; margin-bottom: 8px;'>QUICK SCENARIO PRESETS</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;'>QUICK SCENARIO PRESETS</div>", unsafe_allow_html=True)
     p_cols = st.columns(4)
-    preset_names = list(PRESETS.keys())
     for idx, p_name in enumerate(preset_names):
         with p_cols[idx]:
             if st.button(p_name, key=f"btn_p_{idx}", use_container_width=True):
@@ -799,13 +1085,13 @@ with tab_single:
                     st.session_state[f"inp_{k}"] = float(v)
                 st.rerun()
 
-    st.markdown("<hr style='border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 18px 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 0; border-top: 1px solid var(--border-divider); margin: 18px 0;'>", unsafe_allow_html=True)
 
     # Primary Input Controls
     col_in1, col_in2 = st.columns([1, 2])
     with col_in1:
         st.markdown("<div class='sentinel-card'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 700; color: #38BDF8; margin-bottom: 12px;'>💳 Transaction Context</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.95rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 12px;'>💳 Transaction Context</div>", unsafe_allow_html=True)
 
         val_amount = st.number_input(
             "Transaction Amount ($)",
@@ -824,7 +1110,7 @@ with tab_single:
             key="inp_Time"
         )
 
-        st.markdown("<div style='margin-top: 16px; font-size: 0.8rem; color: #94A3B8; font-weight: 600;'>PRIMARY ANOMALY INDICATORS</div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600;'>PRIMARY ANOMALY INDICATORS</div>", unsafe_allow_html=True)
         st.caption("PCA components with highest statistical correlation to credit card fraud anomalies (V14, V10, V12, V17, V4, V11).")
 
         key_anom = ["V14", "V10", "V12", "V17", "V4", "V11"]
@@ -871,11 +1157,11 @@ with tab_single:
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <span class="badge-pill badge-danger"><span class="pulse-dot" style="background:#EF4444;"></span> HIGH RISK CRITICAL</span>
-                            <h2 style="color: #F87171; margin: 10px 0 4px 0; font-size: 1.8rem; font-weight: 800;">🚨 TRANSACTION FLAGGED AS FRAUD</h2>
-                            <div style="color: #FCA5A5; font-size: 0.92rem;">Autonomous Action: <b>CARD ACCESS FROZEN • 2FA STEP-UP CHALLENGE</b></div>
+                            <h2 class="verdict-fraud-title">🚨 TRANSACTION FLAGGED AS FRAUD</h2>
+                            <div class="verdict-fraud-sub">Autonomous Action: <b>CARD ACCESS FROZEN • 2FA STEP-UP CHALLENGE</b></div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase;">Confidence Score</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Confidence Score</div>
                             <div style="font-size: 2.3rem; font-weight: 900; color: #EF4444; font-family: 'JetBrains Mono', monospace;">{ens_prob:.1%}</div>
                         </div>
                     </div>
@@ -887,11 +1173,11 @@ with tab_single:
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <span class="badge-pill badge-online"><span class="pulse-dot"></span> CLEAN TRANSACTION</span>
-                            <h2 style="color: #34D399; margin: 10px 0 4px 0; font-size: 1.8rem; font-weight: 800;">✅ TRANSACTION AUTHORIZED</h2>
-                            <div style="color: #A7F3D0; font-size: 0.92rem;">Autonomous Action: <b>INSTANT ZERO-FRICTION COMMERCE APPROVAL</b></div>
+                            <h2 class="verdict-safe-title">✅ TRANSACTION AUTHORIZED</h2>
+                            <div class="verdict-safe-sub">Autonomous Action: <b>INSTANT ZERO-FRICTION COMMERCE APPROVAL</b></div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase;">Fraud Likelihood</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Fraud Likelihood</div>
                             <div style="font-size: 2.3rem; font-weight: 900; color: #10B981; font-family: 'JetBrains Mono', monospace;">{ens_prob:.1%}</div>
                         </div>
                     </div>
@@ -901,11 +1187,11 @@ with tab_single:
         st.markdown(verdict_html, unsafe_allow_html=True)
 
         # Multi-Model Voting Breakdown Cards
-        st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #94A3B8; margin-bottom: 8px;'>ENSEMBLE BASE-LEARNER DISCORDANCE</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;'>ENSEMBLE BASE-LEARNER DISCORDANCE</div>", unsafe_allow_html=True)
 
         m_cols = st.columns(4)
         models_meta = [
-            ("1D-CNN", single_probs["1D-CNN"], "Spatial Convolution", "#38BDF8"),
+            ("1D-CNN", single_probs["1D-CNN"], "Spatial Convolution", "#06B6D4"),
             ("Bi-LSTM", single_probs["Bi-LSTM"], "Temporal Recurrence", "#818CF8"),
             ("Transformer", single_probs["Transformer"], "Self-Attention", "#C084FC"),
             ("XGBoost (Raw)", single_probs["XGBoost (Raw)"], "Boosted Trees", "#F472B6"),
@@ -915,9 +1201,9 @@ with tab_single:
             with m_cols[m_idx]:
                 st.markdown(f"""
                     <div class="model-pill-score" style="border-top: 3px solid {m_color};">
-                        <div style="font-size: 0.74rem; color: #94A3B8; font-weight: 600;">{m_name}</div>
-                        <div style="font-size: 1.3rem; font-weight: 800; color: #FFFFFF; font-family: 'JetBrains Mono', monospace; margin: 4px 0;">{m_prob:.1%}</div>
-                        <div style="font-size: 0.68rem; color: #64748B;">{m_role}</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted); font-weight: 600;">{m_name}</div>
+                        <div class="model-pill-val">{m_prob:.1%}</div>
+                        <div style="font-size: 0.68rem; color: var(--text-dim);">{m_role}</div>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -946,22 +1232,21 @@ with tab_single:
         ).properties(
             title="Individual Model Decision Breakdown",
             height=240
-        ).configure_view(
-            strokeWidth=0
         )
+        bar_chart = configure_chart_theme(bar_chart, is_dark)
         st.altair_chart(bar_chart, use_container_width=True)
 
         # --------------------------------------------------------------------
         # Explainable AI: SHAP Feature Attribution
         # --------------------------------------------------------------------
-        st.markdown("<hr style='border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 26px 0 20px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: 0; border-top: 1px solid var(--border-divider); margin: 26px 0 20px 0;'>", unsafe_allow_html=True)
         st.markdown("""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                 <div>
-                    <h4 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #F8FAFC;">
+                    <h4 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">
                         🔍 Explainable AI (XAI): SHAP Feature Attribution
                     </h4>
-                    <div style="font-size: 0.82rem; color: #94A3B8; margin-top: 3px;">
+                    <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">
                         Cooperative Game Theory Shapley values showing why this specific transaction was classified as fraud or legitimate.
                     </div>
                 </div>
@@ -982,56 +1267,64 @@ with tab_single:
         top_mitigate_idx = np.argsort(vals)
 
         # Top Drivers KPI Cards
+        pos_box_bg = "rgba(239, 68, 68, 0.08)" if is_dark else "#FEF2F2"
+        neg_box_bg = "rgba(16, 185, 129, 0.08)" if is_dark else "#F0FDF4"
+        val_color = "#CBD5E1" if is_dark else "#334155"
+
         c_risk, c_mit = st.columns(2)
         with c_risk:
-            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #F87171; margin-bottom: 8px;'>🚨 TOP FRAUD RISK DRIVERS (+SHAP)</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #EF4444; margin-bottom: 8px;'>🚨 TOP FRAUD RISK DRIVERS (+SHAP)</div>", unsafe_allow_html=True)
             top_pos = [i for i in top_risk_idx if vals[i] > 0.001][:3]
             if top_pos:
                 for idx in top_pos:
                     raw_val = row_dict[feat_names[idx]]
                     st.markdown(f"""
-                        <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;">
-                            <span><b>{feat_names[idx]}</b> = <span style="font-family: 'JetBrains Mono', monospace; color:#CBD5E1;">{raw_val:.3f}</span></span>
-                            <span style="color: #F87171; font-weight: 700; font-family: 'JetBrains Mono', monospace;">+{vals[idx]:.3f} SHAP</span>
+                        <div style="background: {pos_box_bg}; border-left: 3px solid #EF4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;">
+                            <span><b>{feat_names[idx]}</b> = <span style="font-family: 'JetBrains Mono', monospace; color:{val_color};">{raw_val:.3f}</span></span>
+                            <span style="color: #EF4444; font-weight: 700; font-family: 'JetBrains Mono', monospace;">+{vals[idx]:.3f} SHAP</span>
                         </div>
                     """, unsafe_allow_html=True)
             else:
                 st.caption("No positive fraud risk drivers for this transaction.")
 
         with c_mit:
-            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #34D399; margin-bottom: 8px;'>🛡️ TOP CLEARANCE FACTORS (-SHAP)</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #10B981; margin-bottom: 8px;'>🛡️ TOP CLEARANCE FACTORS (-SHAP)</div>", unsafe_allow_html=True)
             top_neg = [i for i in top_mitigate_idx if vals[i] < -0.001][:3]
             if top_neg:
                 for idx in top_neg:
                     raw_val = row_dict[feat_names[idx]]
                     st.markdown(f"""
-                        <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10B981; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;">
-                            <span><b>{feat_names[idx]}</b> = <span style="font-family: 'JetBrains Mono', monospace; color:#CBD5E1;">{raw_val:.3f}</span></span>
-                            <span style="color: #34D399; font-weight: 700; font-family: 'JetBrains Mono', monospace;">{vals[idx]:.3f} SHAP</span>
+                        <div style="background: {neg_box_bg}; border-left: 3px solid #10B981; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;">
+                            <span><b>{feat_names[idx]}</b> = <span style="font-family: 'JetBrains Mono', monospace; color:{val_color};">{raw_val:.3f}</span></span>
+                            <span style="color: #10B981; font-weight: 700; font-family: 'JetBrains Mono', monospace;">{vals[idx]:.3f} SHAP</span>
                         </div>
                     """, unsafe_allow_html=True)
             else:
                 st.caption("No significant mitigating clearance factors for this transaction.")
 
-        # Matplotlib Dark Glassmorphism SHAP Waterfall Chart
+        # Matplotlib Adaptive Waterfall Chart
         fig, ax = plt.subplots(figsize=(9, 4.8), dpi=120)
-        fig.patch.set_facecolor("#0F172A")
-        ax.set_facecolor("#0F172A")
+        plot_bg = "#0B0F19" if is_dark else "#FFFFFF"
+        plot_text = "#F1F5F9" if is_dark else "#0F172A"
+        plot_label = "#94A3B8" if is_dark else "#475569"
+        plot_ytick = "#E2E8F0" if is_dark else "#1E293B"
+
+        fig.patch.set_facecolor(plot_bg)
+        ax.set_facecolor(plot_bg)
 
         with plt.rc_context({
-            "text.color": "#F1F5F9",
-            "axes.labelcolor": "#94A3B8",
-            "xtick.color": "#94A3B8",
-            "ytick.color": "#E2E8F0",
+            "text.color": plot_text,
+            "axes.labelcolor": plot_label,
+            "xtick.color": plot_label,
+            "ytick.color": plot_ytick,
             "font.family": "sans-serif",
             "font.size": 8.5
         }):
             shap.plots.waterfall(shap_explanation[0], max_display=9, show=False)
-            plt.title("Transaction Decision Waterfall (f(x) vs E[f(X)])", color="#F8FAFC", fontsize=11, fontweight="bold", pad=12)
+            plt.title("Transaction Decision Waterfall (f(x) vs E[f(X)])", color=plot_text, fontsize=11, fontweight="bold", pad=12)
             plt.tight_layout()
             st.pyplot(fig, clear_figure=True)
             plt.close(fig)
-
 
 
 # ============================================================================
@@ -1041,41 +1334,45 @@ with tab_arch:
     st.markdown("""
         <div>
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Deep Learning & Stacking Architecture</h3>
-            <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 18px;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">
                 Architecture details and empirical performance metrics on the Kaggle European Cardholders dataset.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     # Architecture Pipeline Diagram
-    st.markdown("""
+    meta_stage_bg = "rgba(14, 116, 144, 0.25)" if is_dark else "#E0F2FE"
+    meta_stage_border = "rgba(6, 182, 212, 0.4)" if is_dark else "#7DD3FC"
+    meta_sub_text = "#E0F2FE" if is_dark else "#0369A1"
+
+    st.markdown(f"""
         <div class="sentinel-card">
-            <div style="font-size: 0.95rem; font-weight: 700; color: #38BDF8; margin-bottom: 14px;">🧠 Hybrid 2-Stage Stacking Topology</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 14px;">🧠 Hybrid 2-Stage Stacking Topology</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; text-align: center;">
-                <div style="background: rgba(30, 41, 59, 0.5); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700;">STAGE 1A</div>
-                    <div style="font-size: 1rem; font-weight: 800; color: #38BDF8; margin: 4px 0;">1D-CNN</div>
-                    <div style="font-size: 0.75rem; color: #64748B;">Spatial Conv filters (32, 64, 128) + MaxPool + Dropout</div>
+                <div class="arch-stage-card">
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">STAGE 1A</div>
+                    <div style="font-size: 1rem; font-weight: 800; color: #06B6D4; margin: 4px 0;">1D-CNN</div>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Spatial Conv filters (32, 64, 128) + MaxPool + Dropout</div>
                 </div>
-                <div style="background: rgba(30, 41, 59, 0.5); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700;">STAGE 1B</div>
+                <div class="arch-stage-card">
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">STAGE 1B</div>
                     <div style="font-size: 1rem; font-weight: 800; color: #818CF8; margin: 4px 0;">Bi-LSTM</div>
-                    <div style="font-size: 0.75rem; color: #64748B;">Stacked Recurrent Units (50 & 100) for sequential relations</div>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Stacked Recurrent Units (50 & 100) for sequential relations</div>
                 </div>
-                <div style="background: rgba(30, 41, 59, 0.5); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700;">STAGE 1C</div>
+                <div class="arch-stage-card">
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">STAGE 1C</div>
                     <div style="font-size: 1rem; font-weight: 800; color: #C084FC; margin: 4px 0;">Transformer</div>
-                    <div style="font-size: 0.75rem; color: #64748B;">Position Embedding + Multi-Head Self-Attention (4 heads)</div>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Position Embedding + Multi-Head Self-Attention (4 heads)</div>
                 </div>
-                <div style="background: rgba(30, 41, 59, 0.5); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700;">STAGE 1D</div>
+                <div class="arch-stage-card">
+                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">STAGE 1D</div>
                     <div style="font-size: 1rem; font-weight: 800; color: #F472B6; margin: 4px 0;">XGBoost Base</div>
-                    <div style="font-size: 0.75rem; color: #64748B;">Gradient Boosted Decision Trees trained on raw feature vector</div>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Gradient Boosted Decision Trees trained on raw feature vector</div>
                 </div>
-                <div style="background: rgba(14, 116, 144, 0.25); padding: 14px; border-radius: 12px; border: 1px solid rgba(6, 182, 212, 0.4);">
-                    <div style="font-size: 0.72rem; color: #67E8F9; font-weight: 700;">STAGE 2 (META)</div>
-                    <div style="font-size: 1rem; font-weight: 800; color: #22D3EE; margin: 4px 0;">XGBoost Meta</div>
-                    <div style="font-size: 0.75rem; color: #E0F2FE;">Trained on out-of-fold base learner probabilities</div>
+                <div style="background: {meta_stage_bg}; padding: 14px; border-radius: 12px; border: 1px solid {meta_stage_border}; box-shadow: var(--card-shadow);">
+                    <div style="font-size: 0.72rem; color: #0284C7; font-weight: 700;">STAGE 2 (META)</div>
+                    <div style="font-size: 1rem; font-weight: 800; color: var(--primary-cyan); margin: 4px 0;">XGBoost Meta</div>
+                    <div style="font-size: 0.75rem; color: {meta_sub_text};">Trained on out-of-fold base learner probabilities</div>
                 </div>
             </div>
         </div>
@@ -1087,6 +1384,8 @@ with tab_arch:
         st.markdown("#### 🏆 Independent Test-Set Benchmark Table")
         st.caption("Stratified 60/20/20 train/validation/test split evaluated on 56,962 untouched holdout transactions.")
 
+        highlight_bg = "#065F46" if is_dark else "#DCFCE7"
+
         st.dataframe(
             res_df.style.format({
                 "Sensitivity": "{:.2%}",
@@ -1096,7 +1395,7 @@ with tab_arch:
                 "AUC-ROC": "{:.4f}",
                 "AUC-PR": "{:.4f}",
                 "TP": "{:,}", "FP": "{:,}", "FN": "{:,}", "TN": "{:,}"
-            }).highlight_max(subset=["Sensitivity", "Specificity", "F1", "AUC-ROC", "AUC-PR"], color="#065F46"),
+            }).highlight_max(subset=["Sensitivity", "Specificity", "F1", "AUC-ROC", "AUC-PR"], color=highlight_bg),
             use_container_width=True
         )
 
@@ -1110,16 +1409,15 @@ with tab_arch:
             y=alt.Y("Score:Q", title="Metric Score (0-1)", scale=alt.Scale(domain=[0.8, 1.0])),
             color=alt.Color("Metric:N", scale=alt.Scale(
                 domain=["Sensitivity", "Specificity", "AUC-ROC"],
-                range=["#EC4899", "#10B981", "#38BDF8"]
+                range=["#EC4899", "#10B981", "#0284C7"]
             )),
             xOffset="Metric:N",
             tooltip=["Model:N", "Metric:N", alt.Tooltip("Score:Q", format=".2%")]
         ).properties(
             title="Model Performance Comparison (Sensitivity vs Specificity vs AUC-ROC)",
             height=300
-        ).configure_view(
-            strokeWidth=0
         )
+        perf_chart = configure_chart_theme(perf_chart, is_dark)
         st.altair_chart(perf_chart, use_container_width=True)
 
     # Curves Display
@@ -1135,7 +1433,7 @@ with tab_policy:
     st.markdown("""
         <div>
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Decision Rules & Financial Impact Simulator</h3>
-            <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 18px;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">
                 Simulate business policy tiers, chargeback recovery, and cost savings from AI-driven fraud mitigation.
             </div>
         </div>
@@ -1145,7 +1443,7 @@ with tab_policy:
 
     with sim_c1:
         st.markdown("<div class='sentinel-card'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 0.95rem; font-weight: 700; color: #38BDF8; margin-bottom: 12px;'>🧮 Enterprise Volume Parameters</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.95rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 12px;'>🧮 Enterprise Volume Parameters</div>", unsafe_allow_html=True)
 
         monthly_volume = st.number_input("Monthly Transactions Audited", min_value=1000, max_value=50000000, value=250000, step=10000)
         avg_ticket = st.number_input("Average Transaction Amount ($)", min_value=5.0, max_value=5000.0, value=95.0, step=5.0)
@@ -1168,19 +1466,19 @@ with tab_policy:
         remaining_loss = total_baseline_loss - total_savings
 
         st.markdown(f"""
-            <div class="sentinel-card" style="border-color: rgba(16, 185, 129, 0.4);">
-                <div style="font-size: 0.95rem; font-weight: 700; color: #10B981; margin-bottom: 12px;'>💼 Estimated Monthly Financial Protection</div>
-                <div style="font-size: 2.2rem; font-weight: 900; color: #34D399; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">
+            <div class="sentinel-card" style="border-color: rgba(16, 185, 129, 0.45);">
+                <div style="font-size: 0.95rem; font-weight: 700; color: #10B981; margin-bottom: 12px;">💼 Estimated Monthly Financial Protection</div>
+                <div style="font-size: 2.2rem; font-weight: 900; color: #10B981; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">
                     ${total_savings:,.2f}
                 </div>
-                <div style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 16px;">Net capital saved per month at 86.9% ensemble recall rate</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Net capital saved per month at 86.9% ensemble recall rate</div>
 
-                <div style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.8;">
-                    <div>• Estimated Unmitigated Fraud Loss: <b style="color:#F87171; float:right;">${total_baseline_loss:,.2f}</b></div>
-                    <div>• Direct Stolen Capital Recovered: <b style="color:#38BDF8; float:right;">+${ai_prevented_fraud_dollars:,.2f}</b></div>
-                    <div>• Avoided Bank Chargeback Penalties: <b style="color:#A7F3D0; float:right;">+${ai_prevented_fines:,.2f}</b></div>
-                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
-                    <div>• Residual Unprevented Exposure: <b style="color:#94A3B8; float:right;">${remaining_loss:,.2f}</b></div>
+                <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.8;">
+                    <div>• Estimated Unmitigated Fraud Loss: <b style="color:#EF4444; float:right;">${total_baseline_loss:,.2f}</b></div>
+                    <div>• Direct Stolen Capital Recovered: <b style="color:var(--primary-cyan); float:right;">+${ai_prevented_fraud_dollars:,.2f}</b></div>
+                    <div>• Avoided Bank Chargeback Penalties: <b style="color:#10B981; float:right;">+${ai_prevented_fines:,.2f}</b></div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-divider); margin: 8px 0;">
+                    <div>• Residual Unprevented Exposure: <b style="color:var(--text-muted); float:right;">${remaining_loss:,.2f}</b></div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
@@ -1191,22 +1489,22 @@ with tab_policy:
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
             <div class="sentinel-card" style="border-top: 4px solid #10B981;">
                 <span class="badge-pill badge-online">Tier 1 // Low Risk (&lt; 0.30)</span>
-                <h4 style="color:#F8FAFC; margin: 10px 0 4px 0;">Frictionless Clearance</h4>
-                <div style="font-size: 0.8rem; color:#94A3B8; line-height: 1.5;">
+                <h4 style="margin: 10px 0 4px 0;">Frictionless Clearance</h4>
+                <div style="font-size: 0.8rem; color:var(--text-muted); line-height: 1.5;">
                     Immediate settlement. Zero customer authentication challenge. Sub-5ms automated clearance.
                 </div>
             </div>
             <div class="sentinel-card" style="border-top: 4px solid #F59E0B;">
                 <span class="badge-pill badge-cyan">Tier 2 // Ambiguous (0.30 - {threshold:.2f})</span>
-                <h4 style="color:#F8FAFC; margin: 10px 0 4px 0;">Step-Up Verification</h4>
-                <div style="font-size: 0.8rem; color:#94A3B8; line-height: 1.5;">
+                <h4 style="margin: 10px 0 4px 0;">Step-Up Verification</h4>
+                <div style="font-size: 0.8rem; color:var(--text-muted); line-height: 1.5;">
                     Prompt 3D-Secure 2.0 biometric OTP or push notification approval before payment confirmation.
                 </div>
             </div>
             <div class="sentinel-card" style="border-top: 4px solid #EF4444;">
                 <span class="badge-pill badge-danger">Tier 3 // Escalated (&gt;= {threshold:.2f})</span>
-                <h4 style="color:#F8FAFC; margin: 10px 0 4px 0;">Auto-Block & Quarantine</h4>
-                <div style="font-size: 0.8rem; color:#94A3B8; line-height: 1.5;">
+                <h4 style="margin: 10px 0 4px 0;">Auto-Block & Quarantine</h4>
+                <div style="font-size: 0.8rem; color:var(--text-muted); line-height: 1.5;">
                     Decline authorization code. Temporary card freeze. Flag transaction to Security Operations Center.
                 </div>
             </div>
